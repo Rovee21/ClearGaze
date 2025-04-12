@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Header Text */}
@@ -22,12 +22,18 @@ const HomeScreen = () => {
 
       {/* Main Actions */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.mainButton}>
+        <TouchableOpacity 
+          style={styles.mainButton}
+          onPress={() => navigation.navigate('Scanning')}
+        >
           <Ionicons name="camera-outline" size={32} color="#00E5FF" />
           <Text style={styles.mainButtonText}>Start Scanning</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.secondaryButton}>
+        
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => navigation.navigate('Settings')}
+        >
           <Ionicons name="settings-outline" size={24} color="#00E5FF" />
           <Text style={styles.secondaryButtonText}>Settings</Text>
         </TouchableOpacity>
@@ -117,6 +123,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 8,
   },
-});
+}); 
 
 export default HomeScreen; 

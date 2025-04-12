@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './screens/HomeScreen';
+import ScanningScreen from './screens/ScanningScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +52,22 @@ export default function App() {
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen 
+          name="Scanning" 
+          component={ScanningScreen}
+          options={{
+            presentation: 'fullScreenModal',
+            animationEnabled: true,
+          }}
+        />
+        <Stack.Screen 
+          name="Settings" 
+          component={SettingsScreen}
+          options={{
+            presentation: 'card',
+            animationEnabled: true,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
