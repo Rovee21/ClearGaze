@@ -1,3 +1,13 @@
+/**
+ * HomeScreen.js - Main Landing Screen
+ * 
+ * This is the primary screen users see when opening the app. It features:
+ * 1. A distinctive eye icon with animated rings
+ * 2. Main action button for starting the scanning process
+ * 3. Secondary button for accessing settings
+ * 4. Custom styled components following the app's dark theme
+ */
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -5,13 +15,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      {/* Header Text */}
+      {/* Header Section - App Title and Tagline */}
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>ClearGaze</Text>
         <Text style={styles.subHeaderText}>Drive Safe, Stay Alert</Text>
       </View>
 
-      {/* Center Eye Icon */}
+      {/* Eye Icon Section - Visual Brand Element */}
       <View style={styles.eyeContainer}>
         <View style={styles.eyeRing}>
           <View style={styles.eyeRing2}>
@@ -20,8 +30,9 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Main Actions */}
+      {/* Action Buttons Section */}
       <View style={styles.actionsContainer}>
+        {/* Primary Action - Start Scanning Button */}
         <TouchableOpacity 
           style={styles.mainButton}
           onPress={() => navigation.navigate('Scanning')}
@@ -30,6 +41,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.mainButtonText}>Start Scanning</Text>
         </TouchableOpacity>
         
+        {/* Secondary Action - Settings Button */}
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={() => navigation.navigate('Settings')}
@@ -42,10 +54,12 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
+// Styles organized by component sections
 const styles = StyleSheet.create({
+  // Container and Header Styles
   container: {
     flex: 1,
-    backgroundColor: '#0A0A16',
+    backgroundColor: '#0A0A16', // Dark theme background
     padding: 20,
   },
   headerContainer: {
@@ -60,9 +74,11 @@ const styles = StyleSheet.create({
   },
   subHeaderText: {
     fontSize: 18,
-    color: '#00E5FF',
+    color: '#00E5FF', // Cyan accent color
     marginTop: 8,
   },
+
+  // Eye Icon and Rings Styles
   eyeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -88,12 +104,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     opacity: 0.6,
   },
+
+  // Action Buttons Styles
   actionsContainer: {
     alignItems: 'center',
     marginTop: 20,
   },
   mainButton: {
-    backgroundColor: '#1A1A2F',
+    backgroundColor: '#1A1A2F', // Slightly lighter than background
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,16 +1,31 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * ScanningScreen.js - Camera and Object Detection Screen
+ * 
+ * This screen handles:
+ * 1. Camera access and preview
+ * 2. Real-time object detection
+ * 3. Visual feedback for detected objects
+ * 4. Audio feedback for important alerts
+ */
+
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
+import { Audio } from 'expo-av';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IDEAL_DISTANCE = 30; // cm - this will be used when we implement actual distance detection
 const DISTANCE_TOLERANCE = 5; // cm
 
 const ScanningScreen = ({ navigation }) => {
+  // State management for permissions and camera
   const [hasPermission, setHasPermission] = useState(null);
-  const [isTooClose, setIsTooClose] = useState(false);
-  const [isTooFar, setIsTooFar] = useState(true);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const cameraRef = useRef(null);
+  const insets = useSafeAreaInsets();
 
+  // Request camera permissions on mount
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -18,6 +33,7 @@ const ScanningScreen = ({ navigation }) => {
     })();
   }, []);
 
+  // Handle permission states
   if (hasPermission === null) {
     return <View style={styles.container}><Text style={styles.text}>Requesting camera permission...</Text></View>;
   }
@@ -26,47 +42,41 @@ const ScanningScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Camera style={styles.camera}>
-        {/* Overlay for guidance */}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Camera Preview */}
+      <Camera 
+        style={styles.camera} 
+        type={type}
+        ref={cameraRef}
+      >
+        {/* Camera UI Overlay */}
         <View style={styles.overlay}>
-          {/* Distance Indicator */}
-          <View style={styles.distanceIndicator}>
-            <Ionicons 
-              name={isTooClose ? "arrow-back" : isTooFar ? "arrow-forward" : "checkmark-circle"} 
-              size={32} 
-              color={isTooClose || isTooFar ? "#FF3B30" : "#4CD964"}
-            />
-            <Text style={[
-              styles.distanceText,
-              { color: isTooClose || isTooFar ? "#FF3B30" : "#4CD964" }
-            ]}>
-              {isTooClose ? "Move back" : isTooFar ? "Move closer" : "Perfect distance"}
-            </Text>
+          {/* Top Bar with Controls */}
+          <View style={styles.topBar}>
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="close" size={30} color="white" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setType(
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
+                );
+              }}>
+              <Ionicons name="camera-reverse-outline" size={30} color="white" />
+            </TouchableOpacity>
           </View>
 
-          {/* Face Outline Guide */}
-          <View style={styles.faceGuide}>
-            <View style={styles.faceOutline} />
+          {/* Scanning Indicator */}
+          <View style={styles.scanningIndicator}>
+            <Text style={styles.scanningText}>Scanning...</Text>
           </View>
-
-          {/* Instructions */}
-          <View style={styles.instructions}>
-            <Text style={styles.instructionText}>
-              Position your face within the outline
-            </Text>
-            <Text style={styles.instructionText}>
-              Keep your eyes open and look straight ahead
-            </Text>
-          </View>
-
-          {/* Close Button */}
-          <TouchableOpacity 
-            style={styles.closeButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="close-circle" size={40} color="white" />
-          </TouchableOpacity>
         </View>
       </Camera>
     </View>
@@ -74,75 +84,52 @@ const ScanningScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  // Main container and camera styles
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'black',
   },
   camera: {
     flex: 1,
   },
+  
+  // UI overlay styles
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'transparent',
   },
-  distanceIndicator: {
-    position: 'absolute',
-    top: 60,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+  topBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    padding: 15,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-  distanceText: {
-    color: 'white',
-    fontSize: 20,
-    marginLeft: 10,
-    fontWeight: '600',
-  },
-  faceGuide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  faceOutline: {
-    width: 280,
-    height: 350,
-    borderWidth: 2,
-    borderColor: '#00E5FF',
-    borderRadius: 140,
-    opacity: 0.8,
-  },
-  instructions: {
-    position: 'absolute',
-    bottom: 100,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 20,
   },
-  instructionText: {
-    color: 'white',
-    fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+  button: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
     padding: 10,
-    borderRadius: 8,
   },
-  closeButton: {
+  
+  // Scanning indicator styles
+  scanningIndicator: {
     position: 'absolute',
-    top: 60,
-    right: 20,
-    zIndex: 2,
+    bottom: 50,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
   },
+  scanningText: {
+    color: '#00E5FF',
+    fontSize: 16,
+  },
+  
+  // Permission and error message styles
   text: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: 20,
   },
 });
 

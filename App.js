@@ -1,15 +1,27 @@
+/**
+ * App.js - Main Application Component
+ * 
+ * This is the root component of the ClearGaze application that sets up:
+ * 1. Navigation infrastructure using React Navigation
+ * 2. Screen hierarchy and navigation stack
+ * 3. Global styling and theme configuration
+ */
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+
+// Import screen components
 import HomeScreen from './screens/HomeScreen';
 import ScanningScreen from './screens/ScanningScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
-const Stack = createStackNavigator();
+// Create a stack navigator instance
+const Stack = createNativeStackNavigator();
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -46,18 +58,23 @@ export default function App() {
     <NavigationContainer onReady={onLayoutRootView}>
       <StatusBar style="light" />
       <Stack.Navigator
+        initialRouteName="Home"
         screenOptions={{
           headerShown: false,
-          cardStyle: { backgroundColor: '#0A0A16' }
+          presentation: 'card',
+          animationEnabled: true,
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen}
+        />
         <Stack.Screen 
           name="Scanning" 
           component={ScanningScreen}
           options={{
             presentation: 'fullScreenModal',
-            animationEnabled: true,
+            animation: 'slide_from_bottom'
           }}
         />
         <Stack.Screen 
@@ -65,7 +82,7 @@ export default function App() {
           component={SettingsScreen}
           options={{
             presentation: 'card',
-            animationEnabled: true,
+            animation: 'slide_from_right'
           }}
         />
       </Stack.Navigator>
